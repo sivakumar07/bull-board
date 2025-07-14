@@ -13,7 +13,10 @@ import { BaseAdapter } from './base';
 export class BullMQAdapter extends BaseAdapter {
   constructor(private queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
     const libName = 'bullmq';
-    const queuePrefix = (queue as any)?.opts?.prefix ?? '';
+    const queuePrefix =
+      (queue as any)?.opts?.prefix ??
+      (queue as any)?.opts?.connection?.prefix ??
+      '';
     const isCustom = queuePrefix && queuePrefix !== 'bull';
     super(libName, {
       ...options,
