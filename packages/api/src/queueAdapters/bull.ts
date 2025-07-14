@@ -13,10 +13,13 @@ import { BaseAdapter } from './base';
 
 export class BullAdapter extends BaseAdapter {
   constructor(public queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
-    const queuePrefix = (queue as any)?.opts?.prefix ?? '';
+    const queuePrefix =
+      (queue as any)?.opts?.prefix ?? (queue as any)?.opts?.redis?.keyPrefix ?? '';
+    const isCustom = queuePrefix && queuePrefix !== 'bull';
     super('bull', {
       ...options,
-      prefix: options.prefix ?? queuePrefix,
+      prefix: options.prefix ?? (isCustom ? `${queuePrefix}:` : ''),
+      delimiter: options.delimiter ?? (isCustom ? ':' : ''),
       allowCompletedRetries: false,
     });
 

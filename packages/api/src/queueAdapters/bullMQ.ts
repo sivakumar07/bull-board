@@ -14,9 +14,11 @@ export class BullMQAdapter extends BaseAdapter {
   constructor(private queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
     const libName = 'bullmq';
     const queuePrefix = (queue as any)?.opts?.prefix ?? '';
+    const isCustom = queuePrefix && queuePrefix !== 'bull';
     super(libName, {
       ...options,
-      prefix: options.prefix ?? queuePrefix,
+      prefix: options.prefix ?? (isCustom ? `${queuePrefix}:` : ''),
+      delimiter: options.delimiter ?? (isCustom ? ':' : ''),
     });
     if (
       !(queue instanceof Queue || `${(queue as Queue).metaValues?.version}`?.startsWith(libName))
