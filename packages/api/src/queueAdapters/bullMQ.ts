@@ -13,7 +13,11 @@ import { BaseAdapter } from './base';
 export class BullMQAdapter extends BaseAdapter {
   constructor(private queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
     const libName = 'bullmq';
-    super(libName, options);
+    const queuePrefix = (queue as any)?.opts?.prefix ?? '';
+    super(libName, {
+      ...options,
+      prefix: options.prefix ?? queuePrefix,
+    });
     if (
       !(queue instanceof Queue || `${(queue as Queue).metaValues?.version}`?.startsWith(libName))
     ) {

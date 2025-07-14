@@ -13,7 +13,12 @@ import { BaseAdapter } from './base';
 
 export class BullAdapter extends BaseAdapter {
   constructor(public queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
-    super('bull', { ...options, allowCompletedRetries: false });
+    const queuePrefix = (queue as any)?.opts?.prefix ?? '';
+    super('bull', {
+      ...options,
+      prefix: options.prefix ?? queuePrefix,
+      allowCompletedRetries: false,
+    });
 
     if (!(queue instanceof BullQueue)) {
       throw new Error(`You've used the Bull adapter with a non-Bull queue.`);
